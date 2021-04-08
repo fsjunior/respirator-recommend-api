@@ -44,7 +44,7 @@ class Settings:
 
     @property
     def mongodb_uri(self) -> str:
-        return self._get_env("MONGODB_URI", str)
+        return self._get_env("MONGODB_URL", str)
 
     # OpenAPI Settings
 
