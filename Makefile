@@ -29,9 +29,9 @@ run-dev:
 	poetry run python run.py
 
 generate-migrations:
-	pymongo-migrate generate -u $(MONGODB_URI) -m migrations
+	pymongo-migrate generate -u $(MONGODB_URL) -m migrations
 	echo "Migration template generated in 'migrations' directory. Please review the generated file."
 
 apply-migrations:
-	pymongo-migrate migrate -u $(MONGODB_URI) -m migrations
+	pymongo-migrate migrate -u $(MONGODB_URL) -m migrations
 
