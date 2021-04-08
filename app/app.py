@@ -9,7 +9,7 @@ from app.config import FlaskConfiguration
 
 
 def create_app():
-    app = Flask("python-flask-restful-seed")
+    app = Flask("respirator-recommend-api")
     app.config.from_object(FlaskConfiguration)
 
     configure_cors(app)
@@ -22,7 +22,7 @@ def create_app():
 
 
 def configure_cors(app):
-    CORS(app, resources={r"/*": {"origins": "*", "send_wildcard": "False", "expose_headers": ["X-Pagination"]}})
+    CORS(app, resources={r"/*": {"origins": "https://respirator-recommend-api.chico.codes", "send_wildcard": "False"}})
 
 
 def configure_marshmallow(app: Flask):
