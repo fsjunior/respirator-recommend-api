@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_mongoengine import MongoEngine
+import locale
 
 from app.api.routes import configure_routes
 from app.cache import configure_cache
@@ -17,6 +18,8 @@ def create_app():
     configure_routes(app)
     configure_cache(app)
     configure_mongodb(app)
+
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
     return app
 

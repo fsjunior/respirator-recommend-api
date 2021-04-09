@@ -1,7 +1,7 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
-from app.api.business.respirator import analyze_website
+from app.api.business.respirator import RespiratorExtractor
 from app.api.schema.respirator import RespiratorQueryArgsSchema, RespiratorSchema
 from app.cache import cache
 from app.model.respirator import Respirator
@@ -27,7 +27,7 @@ class RespiratorView(MethodView):
         result = Respirator.objects(**respirator_args).first()
 
         if result is None:
-            result = analyze_website(**respirator_args)
+            result = RespiratorExtractor(**respirator_args).analyze_website()
             # result.save()
 
         return result
