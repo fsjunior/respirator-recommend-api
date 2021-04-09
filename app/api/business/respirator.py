@@ -78,7 +78,7 @@ class ApprovalCertificateExtractor(BaseExtractor):
             self.approval_certificate.valid = (
                 soup.find("div", {"id": "box_result"}).find_all("p")[7].span.get_text().lower() == "válido"
             )
-            self.approval_certificate.manufacturer = title.split(" - ")[-1].split(" ")[0].lower()
+            self.approval_certificate.manufacturer = title.split(" - ")[2].split(" ")[0].lower()
         except (IndexError, AttributeError) as exception:
             raise ErrorParsingWebsite from exception
 
