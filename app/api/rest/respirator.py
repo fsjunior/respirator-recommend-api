@@ -28,6 +28,6 @@ class RespiratorView(MethodView):
 
         if result is None:
             result = RespiratorExtractor(**respirator_args).analyze_website()
-            # result.save()
+            result.save()
 
         return result

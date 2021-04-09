@@ -43,7 +43,7 @@ class ApprovalCertificateExtractor:
         headers = Headers(headers=True).generate()
         try:
             res = requests.get(
-                f"https://consultaca.com/{self.approval_certificate.number}", timeout=1.0, headers=headers
+                f"https://consultaca.com/{self.approval_certificate.number}", timeout=3.0, headers=headers
             )
         except requests.exceptions.MissingSchema as exception:
             raise MalformedURL() from exception
@@ -93,7 +93,7 @@ class RespiratorExtractor:
     def _download_website(self) -> BeautifulSoup:
         headers = Headers(headers=True).generate()
         try:
-            res = requests.get(self.url, timeout=1.0, headers=headers)
+            res = requests.get(self.url, timeout=3.0, headers=headers)
         except requests.exceptions.MissingSchema as exception:
             raise MalformedURL() from exception
         except requests.exceptions.RequestException as exception:
@@ -107,8 +107,10 @@ class RespiratorExtractor:
         except Exception as exception:
             raise CannotOpenWebsite from exception
 
-    def analyze_title(self, title: str):
-        text = nlp(title)
+    def analyze_title(self, title: BeautifulSoup):
+        self.respirator.title = title.get_text()
+
+        text = nlp(title.get_text().lower())
 
         detected_labels = {entity.label_: entity.text for entity in text.ents}
 
@@ -132,11 +134,12 @@ class RespiratorExtractor:
             self.respirator.quantity = 1
 
         if "CA" in detected_labels:
-            self._extract_ac(detected_labels["CA"], title)
+            self._extract_approval_certificate(detected_labels["CA"], title)
 
-    def _extract_ac(self, ac_candidate, title):
+    def _extract_approval_certificate(self, ac_candidate, title):
         try:
             number = locale.atoi(ac_candidate)
+            print(f"CA Candidate: {number}")
         except ValueError:
             return False
 
@@ -148,26 +151,27 @@ class RespiratorExtractor:
 
         return False
 
-    def search_ac(self, body: str, title: str):
-        text = nlp(body)
+    def search_approval_certificate(self, body: BeautifulSoup, title: BeautifulSoup):
+        for child in body.find_all(recursive=False):
+            text = nlp(child.get_text().lower())
+            for entity in text.ents:
+                if "CA" in entity.label_:
+                    if self._extract_approval_certificate(entity.text, title.get_text().lower()):
+                        return
 
-        for entity in text.ents:
-            if "CA" in entity.label_:
-                if self._extract_ac(entity.text, title):
-                    break
-
-    def search_el(self, body: str):
-        text = nlp(body)
-
-        for entity in text.ents:
-            if "EL" in entity.label_:
-                self.respirator.spandex = True
+    def search_spandex(self, body: BeautifulSoup):
+        for child in body.find_all(recursive=False):
+            text = nlp(child.get_text().lower())
+            for entity in text.ents:
+                if "EL" in entity.label_:
+                    self.respirator.spandex = True
+                    return
 
     def analyze_website(self) -> Respirator:
         soup = self._download_website()
         try:
-            title = soup.title.get_text().lower()
-            body = soup.body.get_text().lower()
+            title = soup.title
+            body = soup.body
         except (IndexError, AttributeError) as ex:
             raise ErrorParsingWebsite from ex
 
@@ -175,7 +179,7 @@ class RespiratorExtractor:
 
         if self.respirator.respirator_type:
             if self.respirator.respirator_type == "PFF2" and not self.respirator.approval_certificate:
-                self.search_ac(body, title)
+                self.search_approval_certificate(body, title)
         else:
-            self.search_el(body)
+            self.search_spandex(body)
         return self.respirator
