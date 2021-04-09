@@ -1,3 +1,5 @@
+from urllib.parse import unquote
+
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
@@ -22,6 +24,8 @@ class RespiratorView(MethodView):
     @cache.memoize(timeout=600)
     def post(cls, respirator_args: dict):
         """List """
+
+        respirator_args["url"] = unquote(respirator_args["url"])
 
         # Search for a previous cached analysis
         result = Respirator.objects(**respirator_args).first()
