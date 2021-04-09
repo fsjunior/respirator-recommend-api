@@ -91,7 +91,7 @@ class RespiratorExtractor(BaseExtractor):
         self.url = url
 
     def analyze_title(self, title: BeautifulSoup):
-        if self.respirator.title is not None:
+        if self.respirator.title is None:
             self.respirator.title = title.get_text()
 
         text = nlp(title.get_text().lower())
