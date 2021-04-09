@@ -118,9 +118,9 @@ class RespiratorExtractor(BaseExtractor):
                 self.respirator.quantity = 1
 
         if "CA" in detected_labels and self.respirator.approval_certificate is None:
-            self._extract_approval_certificate(detected_labels["CA"], title.get_text().lower())
+            self._extract_approval_certificate(detected_labels["CA"], None)
 
-    def _extract_approval_certificate(self, ac_candidate: str, title: str):
+    def _extract_approval_certificate(self, ac_candidate: str, title: str = None):
         try:
             number = int(ac_candidate.replace(".", ""))
         except (ValueError, AttributeError):
@@ -128,9 +128,10 @@ class RespiratorExtractor(BaseExtractor):
 
         approval_certificate = ApprovalCertificateExtractor(number).approval_certificate
 
-        if approval_certificate.good_ac and approval_certificate.manufacturer in title:
-            self.respirator.approval_certificate = approval_certificate
-            return True
+        if approval_certificate.good_ac:
+            if title is None or approval_certificate.manufacturer in title:
+                self.respirator.approval_certificate = approval_certificate
+                return True
 
         return False
 
