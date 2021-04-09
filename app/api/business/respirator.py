@@ -182,4 +182,5 @@ class RespiratorExtractor:
                 self.search_approval_certificate(body, title)
         else:
             self.search_spandex(body)
+
         return self.respirator
