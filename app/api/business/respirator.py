@@ -114,25 +114,26 @@ class RespiratorExtractor:
         detected_labels = {entity.label_: entity.text for entity in text.ents}
 
         respirator_type = _find_first(["KN95", "PFF3", "PFF2", "PFF1"], detected_labels)
-        if respirator_type is not None:
+        if respirator_type is not None and self.respirator.respirator_type is None:
             self.respirator.respirator_type = respirator_type
 
         exhalation_valve = _find_first(["CV", "SV"], detected_labels)
-        if exhalation_valve is not None:
+        if exhalation_valve is not None and self.respirator.exhalation_valve is None:
             self.respirator.exhalation_valve = exhalation_valve == "CV"
 
-        if "EL" in detected_labels:
+        if "EL" in detected_labels and self.respirator.spandex is None:
             self.respirator.spandex = True
 
-        if "QT" in detected_labels:
-            try:
-                self.respirator.quantity = int(detected_labels["QT"].replace(".", ""))
-            except (ValueError, AttributeError):
+        if self.respirator.quantity is None:
+            if "QT" in detected_labels:
+                try:
+                    self.respirator.quantity = int(detected_labels["QT"].replace(".", ""))
+                except (ValueError, AttributeError):
+                    self.respirator.quantity = 1
+            else:
                 self.respirator.quantity = 1
-        else:
-            self.respirator.quantity = 1
 
-        if "CA" in detected_labels:
+        if "CA" in detected_labels and self.respirator.approval_certificate is None:
             self._extract_approval_certificate(detected_labels["CA"], title.get_text().lower())
 
     def _extract_approval_certificate(self, ac_candidate: str, title: str):
@@ -174,6 +175,9 @@ class RespiratorExtractor:
             raise ErrorParsingWebsite from ex
 
         self.analyze_title(title)
+
+        for tag_h1 in soup.find_all("h1")[:3]:
+            self.analyze_title(tag_h1)
 
         if self.respirator.respirator_type:
             if self.respirator.respirator_type == "PFF2" and not self.respirator.approval_certificate:

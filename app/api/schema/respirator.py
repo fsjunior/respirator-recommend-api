@@ -10,7 +10,7 @@ class ApprovalCertificateSchema(Schema):
 class RespiratorSchema(Schema):
     id = fields.String(dump_only=True, description="Respirator Entry ID")
     title = fields.String(required=True, description="Respirator Site Title")
-    date = fields.Date(description="Last time updated")
+    date = fields.DateTime(description="Last time updated")
     url = fields.String(required=True, description="Respirator Site URL")
     respirator_type = fields.Str(
         required=False, validate=validate.OneOf(["PFF1", "PFF2", "PFF3", "KN95"]), description="Type of the respirator"
