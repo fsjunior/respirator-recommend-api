@@ -1,14 +1,20 @@
-from bs4 import BeautifulSoup
 import locale
 from typing import List, Type
+
 import requests
+from bs4 import BeautifulSoup
 from fake_headers import Headers
 
-
 from app.api.business.common import find_by_id
-from app.api.exceptions.respirator import RespiratorNotFound, CannotOpenWebsite, CannotCheckACWebsite, \
-    ErrorParsingACWebsite, MalformedURL, ErrorParsingWebsite
-from app.model.respirator import Respirator, ApprovalCertificate
+from app.api.exceptions.respirator import (
+    CannotCheckACWebsite,
+    CannotOpenWebsite,
+    ErrorParsingACWebsite,
+    ErrorParsingWebsite,
+    MalformedURL,
+    RespiratorNotFound,
+)
+from app.model.respirator import ApprovalCertificate, Respirator
 from app.nlp import nlp
 
 
@@ -28,20 +34,36 @@ class ApprovalCertificateExtractor:
         self.approval_certificate = ApprovalCertificate.objects(number=number).first()
 
         if self.approval_certificate is None:
-            self.approval_certificate = ApprovalCertificate(number=number, good_ac=False)
+            self.approval_certificate = ApprovalCertificate(number=number)
             soup = self._download_website()
             self.parse_website(soup)
             self.approval_certificate.save()
 
     def _download_website(self) -> BeautifulSoup:
         headers = Headers(headers=True).generate()
-        res = requests.get(f'https://consultaca.com/{self.approval_certificate.number}', timeout=1.0, headers=headers)
+        try:
+            res = requests.get(
+                f"https://consultaca.com/{self.approval_certificate.number}", timeout=1.0, headers=headers
+            )
+        except requests.exceptions.MissingSchema as exception:
+            raise MalformedURL() from exception
+        except requests.exceptions.RequestException as exception:
+            raise CannotOpenWebsite from exception
+
         if res.status_code != 200:
             raise CannotCheckACWebsite()
-        return BeautifulSoup(res.text, 'html.parser')
+
+        try:
+            return BeautifulSoup(res.text, "html.parser")
+        except Exception as exception:
+            raise CannotOpenWebsite from exception
 
     def parse_website(self, soup: BeautifulSoup):
-        title = soup.find_all('title')[0].get_text().lower()
+        try:
+            title = soup.title.get_text().lower()
+        except (IndexError, AttributeError) as exception:
+            raise ErrorParsingACWebsite from exception
+
         text = nlp(title)
 
         detected_labels = {entity.label_: entity.text for entity in text.ents}
@@ -53,14 +75,12 @@ class ApprovalCertificateExtractor:
         self.approval_certificate.ac_class = ac_class
 
         try:
-            self.approval_certificate.valid = soup.find('div', {'id': 'box_result'}).find_all('p')[7].span.get_text().lower() == 'válido'
-        except IndexError as ie:
-            raise ErrorParsingACWebsite() from ie
-
-        try:
-            self.approval_certificate.manufacturer = title.split(' - ')[-1].split(' ')[0].lower()
-        except IndexError as ie:
-            raise ErrorParsingACWebsite() from ie
+            self.approval_certificate.valid = (
+                soup.find("div", {"id": "box_result"}).find_all("p")[7].span.get_text().lower() == "válido"
+            )
+            self.approval_certificate.manufacturer = title.split(" - ")[-1].split(" ")[0].lower()
+        except (IndexError, AttributeError) as exception:
+            raise ErrorParsingACWebsite from exception
 
         self.approval_certificate.good_ac = True
 
@@ -74,18 +94,18 @@ class RespiratorExtractor:
         headers = Headers(headers=True).generate()
         try:
             res = requests.get(self.url, timeout=1.0, headers=headers)
-        except requests.exceptions.MissingSchema as ms:
-            raise MalformedURL() from ms
-        except requests.exceptions.RequestException as re:
-            raise CannotOpenWebsite from re
+        except requests.exceptions.MissingSchema as exception:
+            raise MalformedURL() from exception
+        except requests.exceptions.RequestException as exception:
+            raise CannotOpenWebsite from exception
 
         if res.status_code != 200:
             raise CannotOpenWebsite
 
         try:
-            return BeautifulSoup(res.text, 'html.parser')
-        except Exception as ex:
-            raise CannotOpenWebsite from ex
+            return BeautifulSoup(res.text, "html.parser")
+        except Exception as exception:
+            raise CannotOpenWebsite from exception
 
     def analyze_title(self, title: str):
         text = nlp(title)
@@ -120,10 +140,10 @@ class RespiratorExtractor:
         except ValueError:
             return False
 
-        ac = ApprovalCertificateExtractor(number).approval_certificate
+        approval_certificate = ApprovalCertificateExtractor(number).approval_certificate
 
-        if ac.good_ac and ac.manufacturer in title:
-            self.respirator.approval_certificate = ac
+        if approval_certificate.good_ac and approval_certificate.manufacturer in title:
+            self.respirator.approval_certificate = approval_certificate
             return True
 
         return False
@@ -159,5 +179,3 @@ class RespiratorExtractor:
         else:
             self.search_el(body)
         return self.respirator
-
-

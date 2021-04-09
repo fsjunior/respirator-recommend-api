@@ -14,7 +14,7 @@ class RespiratorSchema(Schema):
         required=False, validate=validate.OneOf(["PFF1", "PFF2", "PFF3", "KN95"]), description="Type of the respirator"
     )
     exhalation_valve = fields.Bool(required=False, description="Exhalation Valve")
-    approval_certificate = fields.Nested('ApprovalCertificateSchema', description="Approval Certificate Info")
+    approval_certificate = fields.Nested("ApprovalCertificateSchema", description="Approval Certificate Info")
     spandex = fields.Bool(required=False, description="This respirator uses spandex?")
     quantity = fields.Int(required=True, description="Offer quantity")
     price_per_unit = fields.Float(required=False, description="Price tag per unit")
