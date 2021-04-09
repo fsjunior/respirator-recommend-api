@@ -91,7 +91,8 @@ class RespiratorExtractor(BaseExtractor):
         self.url = url
 
     def analyze_title(self, title: BeautifulSoup):
-        self.respirator.title = title.get_text()
+        if self.respirator.title is not None:
+            self.respirator.title = title.get_text()
 
         text = nlp(title.get_text().lower())
 
@@ -159,10 +160,10 @@ class RespiratorExtractor(BaseExtractor):
         except (IndexError, AttributeError) as ex:
             raise ErrorParsingWebsite from ex
 
-        self.analyze_title(title)
-
-        for tag_h1 in soup.find_all("h1")[:3]:
+        for tag_h1 in soup.find_all("h1")[:1]:
             self.analyze_title(tag_h1)
+
+        self.analyze_title(title)
 
         if self.respirator.respirator_type:
             if self.respirator.respirator_type == "PFF2" and not self.respirator.approval_certificate:
