@@ -1,4 +1,3 @@
-import locale
 from typing import List, Type
 
 import requests
@@ -127,20 +126,19 @@ class RespiratorExtractor:
 
         if "QT" in detected_labels:
             try:
-                self.respirator.quantity = locale.atoi(detected_labels["QT"])
-            except ValueError:
+                self.respirator.quantity = int(detected_labels["QT"].replace(".", ""))
+            except (ValueError, AttributeError):
                 self.respirator.quantity = 1
         else:
             self.respirator.quantity = 1
 
         if "CA" in detected_labels:
-            self._extract_approval_certificate(detected_labels["CA"], title)
+            self._extract_approval_certificate(detected_labels["CA"], title.get_text().lower())
 
-    def _extract_approval_certificate(self, ac_candidate, title):
+    def _extract_approval_certificate(self, ac_candidate: str, title: str):
         try:
-            number = locale.atoi(ac_candidate)
-            print(f"CA Candidate: {number}")
-        except ValueError:
+            number = int(ac_candidate.replace(".", ""))
+        except (ValueError, AttributeError):
             return False
 
         approval_certificate = ApprovalCertificateExtractor(number).approval_certificate
