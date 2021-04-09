@@ -30,7 +30,7 @@ class RespiratorView(MethodView):
         # Search for a previous cached analysis
         result = Respirator.objects(**respirator_args).first()
 
-        if result is None:
+        if result is None or (result.respirator_type is not None and result.approval_certificate is None):
             result = RespiratorExtractor(**respirator_args).analyze_website()
             result.save()
 

@@ -19,13 +19,3 @@ class CannotOpenWebsite(HTTPException):
 class ErrorParsingWebsite(HTTPException):
     code = 599
     data = {"message": "Error Parsing Website"}
-
-
-class CannotCheckACWebsite(HTTPException):
-    code = 599
-    data = {"message": "Cannot Check AC Website"}
-
-
-class ErrorParsingACWebsite(HTTPException):
-    code = 599
-    data = {"message": "Error Parsing AC Website"}
