@@ -21,7 +21,7 @@ class Respirator(Document):
     exhalation_valve = BooleanField(required=False)
     approval_certificate = ReferenceField("ApprovalCertificate", reverse_delete_rule=CASCADE)
     spandex = BooleanField(required=False)
-    quantity = IntField(required=True)
+    quantity = IntField(required=False)
     price_per_unit = FloatField(required=False)
 
     def __repr__(self):

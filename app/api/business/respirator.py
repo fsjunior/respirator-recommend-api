@@ -135,16 +135,17 @@ class RespiratorExtractor(BaseExtractor):
         return False
 
     def search_approval_certificate(self, body: BeautifulSoup, title: BeautifulSoup):
-        for child in body.find_all(recursive=False):
-            text = nlp(child.get_text().lower())
+        children = map(lambda x: x.get_text().lower(), body.find_all(recursive=False))
+
+        for text in nlp.pipe(children):
             for entity in text.ents:
                 if "CA" in entity.label_:
                     if self._extract_approval_certificate(entity.text, title.get_text().lower()):
                         return
 
     def search_spandex(self, body: BeautifulSoup):
-        for child in body.find_all(recursive=False):
-            text = nlp(child.get_text().lower())
+        children = map(lambda x: x.get_text().lower(), body.find_all(recursive=False))
+        for text in nlp.pipe(children):
             for entity in text.ents:
                 if "EL" in entity.label_:
                     self.respirator.spandex = True
@@ -163,11 +164,11 @@ class RespiratorExtractor(BaseExtractor):
         for tag_h1 in soup.find_all("h1")[:3]:
             self.analyze_title(tag_h1)
 
-        if self.respirator.quantity is None:
-            self.respirator.quantity = 1
+        # if self.respirator.quantity is None:
+        #     self.respirator.quantity = 1
 
         if self.respirator.respirator_type:
-            if self.respirator.respirator_type == "PFF2" and not self.respirator.approval_certificate:
+            if self.respirator.respirator_type in ("PFF2", "PFF3") and not self.respirator.approval_certificate:
                 self.search_approval_certificate(body, title)
         else:
             self.search_spandex(body)

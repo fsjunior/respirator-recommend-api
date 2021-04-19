@@ -133,3 +133,5 @@ dmypy.json
 .pytest_cache
 
 .env
+
+validation/data/*
