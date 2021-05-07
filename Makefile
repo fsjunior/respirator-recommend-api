@@ -31,7 +31,7 @@ check-all: coverage
 
 coverage: clean
 	poetry run pytest --dead-fixtures --dup-fixtures test
-	poetry run pytest test --cov --cov-fail-under=99 --cov-report=term-missing
+	poetry run pytest test --cov --cov-fail-under=85 --cov-report=term-missing
 
 coverage-update: coverage
 	poetry run codecov

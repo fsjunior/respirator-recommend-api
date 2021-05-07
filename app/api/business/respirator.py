@@ -1,18 +1,13 @@
-from typing import List, Type
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from fake_headers import Headers
 from requests.adapters import HTTPAdapter
 
-from app.api.business.common import find_by_id
-from app.api.exceptions.respirator import CannotOpenWebsite, ErrorParsingWebsite, MalformedURL, RespiratorNotFound
+from app.api.exceptions.respirator import CannotOpenWebsite, ErrorParsingWebsite, MalformedURL
 from app.model.respirator import ApprovalCertificate, Respirator
 from app.nlp import nlp
-
-
-def find_respirator_by_id(doc_class: Type[Respirator], doc_id: str) -> Respirator:
-    return find_by_id(doc_class, doc_id, RespiratorNotFound)
 
 
 def _find_first(values: List[str], dictionary: dict):
@@ -109,12 +104,12 @@ class RespiratorExtractor(BaseExtractor):
         if "EL" in detected_labels and self.respirator.spandex is None:
             self.respirator.spandex = True
 
-        if self.respirator.quantity is None:
-            if "QT" in detected_labels:
-                try:
-                    self.respirator.quantity = int(detected_labels["QT"].replace(".", ""))
-                except (ValueError, AttributeError):
-                    pass
+        # if self.respirator.quantity is None:
+        #     if "QT" in detected_labels:
+        #         try:
+        #             self.respirator.quantity = int(detected_labels["QT"].replace(".", ""))
+        #         except (ValueError, AttributeError):
+        #             pass
 
         if "CA" in detected_labels and self.respirator.approval_certificate is None:
             self._extract_approval_certificate(detected_labels["CA"], None)
@@ -163,9 +158,6 @@ class RespiratorExtractor(BaseExtractor):
 
         for tag_h1 in soup.find_all("h1")[:3]:
             self.analyze_title(tag_h1)
-
-        # if self.respirator.quantity is None:
-        #     self.respirator.quantity = 1
 
         if self.respirator.respirator_type:
             if self.respirator.respirator_type in ("PFF2", "PFF3") and not self.respirator.approval_certificate:
