@@ -8,7 +8,7 @@ class FlaskConfiguration:
     API_VERSION = settings.app_version
 
     MONGODB_SETTINGS = {
-        "host": settings.mongodb_uri,
+        "host": settings.mongo_url,
     }
 
     OPENAPI_VERSION = settings.openapi_version

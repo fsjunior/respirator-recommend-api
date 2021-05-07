@@ -43,8 +43,8 @@ class Settings:
     # Mongo Settings
 
     @property
-    def mongodb_uri(self) -> str:
-        return self._get_env("MONGODB_URI", str)
+    def mongo_url(self) -> str:
+        return self._get_env("MONGO_URL", str)
 
     # OpenAPI Settings
 
@@ -73,3 +73,7 @@ class Settings:
         return self._get_env(
             "OPENAPI_REDOC_URL", str, "https://cdn.jsdelivr.net/npm/redoc@2.0.0-rc.45/bundles/redoc.standalone.js"
         )
+
+    @property
+    def nlp_model_path(self) -> str:
+        return "nlp/model-best"
