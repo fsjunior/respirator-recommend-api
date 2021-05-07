@@ -18,8 +18,12 @@ KN95 mesmo com máscaras PFF2 (que são mais seguras) disponíveis.
 Muitos ainda utilizam máscaras com elastano em sua composição, o que pode aumentar [mais perigoso](https://www.businessinsider.com/what-is-best-face-mask-coronavirus-protection-2020-7) 
 a geração de aerossóis pelo usuário.
 
+A ideia dessa API é que ela seja capaz de analisar um site de um fornecedor de máscaras e extraia
+informações relevantes da máscara fornecida, como se ela é do tipo PFF2 (e se tem Certificado de
+Aprovação válido), se possue elastano em sua composição etc.
+
 É possível acessar a API diretamente [aqui](https://respirator-recommend-api.chico.codes/doc/swagger). Para isso, 
-chame o método `POST` do endpoint `/api/v1/respirator com` o parametro url com a URL codificada de 
+chame o método `POST` do endpoint `/api/v1/respirator com` o parametro url com a URL de 
 um fornecedor de máscaras. Por exemplo: 
 `https://www.superepi.com.br/mascara-bls-pff2-sem-valvula-bls-tipo-concha-128-b-1835-p1052423`
 
