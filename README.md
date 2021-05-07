@@ -21,7 +21,7 @@ a geração de aerossóis pelo usuário.
 É possível acessar a API diretamente [aqui](https://respirator-recommend-api.chico.codes/doc/swagger). Para isso, 
 chame o método `POST` do endpoint `/api/v1/respirator com` o parametro url com a URL codificada de 
 um fornecedor de máscaras. Por exemplo: 
-`https%3A%2F%2Fwww.superepi.com.br%2Fmascara-bls-pff2-sem-valvula-bls-tipo-concha-128-b-1835-p1052423`
+`https://www.superepi.com.br/mascara-bls-pff2-sem-valvula-bls-tipo-concha-128-b-1835-p1052423`
 
 ## Recursos
 
