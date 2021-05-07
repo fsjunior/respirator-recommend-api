@@ -22,9 +22,7 @@ def create_app():
 
 
 def configure_cors(app):
-    # CORS(app, resources={r"/*": {"origins": "https://respirator-recommend-api.chico.codes",
-    # "send_wildcard": "False"}})
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app, resources={r"/*": {"origins": "https://respirator-recommend-api.chico.codes", "send_wildcard": "False"}})
 
 
 def configure_marshmallow(app: Flask):

@@ -1,0 +1,77 @@
+{
+	"info": {
+		"_postman_id": "0c1cd05d-2731-4765-980f-fc6dfc29529f",
+		"name": "Respirator Recommend API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost",
+			"item": [
+				{
+					"name": "Respirator Analayze",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8080/api/v1/respirator?url=https://www.superepi.com.br/mascara-bls-pff2-sem-valvula-bls-tipo-concha-128-b-1835-p1052423",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"respirator"
+							],
+							"query": [
+								{
+									"key": "url",
+									"value": "https://www.superepi.com.br/mascara-bls-pff2-sem-valvula-bls-tipo-concha-128-b-1835-p1052423"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "chico.codes",
+			"item": [
+				{
+					"name": "Respirator Analayze",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://respirator-recommend-api.chico.codes/api/v1/respirator?url=Kit máscaras N95 descartáveis de proteção facial PFF2 com 5 camadas e clip nasal - 20 Unidadesdokku ",
+							"protocol": "https",
+							"host": [
+								"respirator-recommend-api",
+								"chico",
+								"codes"
+							],
+							"path": [
+								"api",
+								"v1",
+								"respirator"
+							],
+							"query": [
+								{
+									"key": "url",
+									"value": "Kit máscaras N95 descartáveis de proteção facial PFF2 com 5 camadas e clip nasal - 20 Unidadesdokku "
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
