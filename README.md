@@ -1,4 +1,5 @@
 # respirator-recommend-api
+
 ![python 3.9](https://img.shields.io/badge/python-3.9-blue)
 [![build](https://img.shields.io/github/workflow/status/fsjunior/respirator-recommend-api/build)](https://github.com/fsjunior/respirator-recommend-api/actions?query=workflow%3Abuild)
 [![Codecov](https://img.shields.io/codecov/c/gh/fsjunior/respirator-recommend-api)](https://codecov.io/gh/fsjunior/python-flask-restful-mongodb-template)
@@ -6,97 +7,89 @@
 [![quality gate](https://img.shields.io/sonar/quality_gate/fsjunior_respirator-recommend-api?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/dashboard?id=fsjunior_respirator-recommend-api)
 ![GitHub last commit](https://img.shields.io/github/last-commit/fsjunior/respirator-recommend-api)
 
-🇺🇸: A respirator recommendation API for Brazillian respirators.
+🇺🇸: An API for recommending Brazilian respirators.
 
-🇧🇷: Uma API de recomendação de respiradores (máscaras) brasileiros.  
+🇧🇷: Uma API para recomendação de respiradores (máscaras) brasileiros.
 
-Minha motivação ao criar essa API foi incentivar o uso de máscaras de qualidade durante esse
-momento de pandemia. Saber diferenciar uma máscara de qualidade e um com menos qualidade não
-é uma tarefa exatamente simples: é muito comum vermos pessoas utilizando máscaras duvidosas 
-KN95 mesmo com máscaras PFF2 (que são mais seguras) disponíveis. 
+## Motivação
 
-Muitos ainda utilizam máscaras com elastano em sua composição, o que pode aumentar [mais perigoso](https://www.businessinsider.com/what-is-best-face-mask-coronavirus-protection-2020-7) 
-a geração de aerossóis pelo usuário.
+A motivação para criar esta API foi incentivar o uso de máscaras de alta qualidade durante a pandemia. Diferenciar uma máscara eficaz de uma menos eficiente não é simples — é comum vermos pessoas usando máscaras KN95 de origem duvidosa, mesmo com opções mais seguras como as PFF2 disponíveis.
 
-A ideia dessa API é que ela seja capaz de analisar um site de um fornecedor de máscaras e extraia
-informações relevantes da máscara fornecida, como se ela é do tipo PFF2 (e se tem Certificado de
-Aprovação válido), se possue elastano em sua composição etc.
+Além disso, muitas máscaras ainda contêm elastano em sua composição, o que pode aumentar a geração de aerossóis pelo usuário, tornando-as menos seguras [[fonte](https://www.businessinsider.com/what-is-best-face-mask-coronavirus-protection-2020-7)].
 
-É possível acessar a API diretamente [aqui](https://respirator-recommend-api.chico.codes/doc/swagger). Para isso, 
-chame o método `POST` do endpoint `/api/v1/respirator com` o parametro url com a URL de 
-um fornecedor de máscaras. Por exemplo: 
-`https://www.superepi.com.br/mascara-bls-pff2-sem-valvula-bls-tipo-concha-128-b-1835-p1052423`
+## O que esta API faz?
 
-Quer saber mais sobre proteção efetiva contra a COVID-19? 
-Leia [meu texto sobre o assunto](https://chico.codes/blog/guia-prote%C3%A7%C3%A3o-contra-covid-19).
+Esta API é capaz de analisar o site de um fornecedor de máscaras e extrair informações relevantes, como:
+
+- Tipo da máscara (ex.: PFF2)
+- Presença de Certificado de Aprovação (CA) válido
+- Composição (ex.: presença de elastano)
+
+Você pode acessá-la diretamente [aqui](https://respirator-recommend-api.chico.codes/doc/swagger). Basta enviar um `POST` para o endpoint `/api/v1/respirator` com o parâmetro `url` apontando para o link do produto.
+
+Exemplo de URL:
+
+https://www.superepi.com.br/mascara-bls-pff2-sem-valvula-bls-tipo-concha-128-b-1835-p1052423
+
+
+Quer saber mais sobre proteção eficaz contra a COVID-19?  
+Leia [este guia](https://chico.codes/blog/guia-prote%C3%A7%C3%A3o-contra-covid-19).
 
 ## Recursos
 
-- Baseado no template [python-flask-restful-mongodb-template](https://github.com/fsjunior/python-flask-restful-mongodb-template).
-- Fornece detecção de tipos de máscaras por meio de NER (Named Entity Recognition) usando a biblioteca [Spacy](https://spacy.io/).
+- Baseada no template [python-flask-restful-mongodb-template](https://github.com/fsjunior/python-flask-restful-mongodb-template)
+- Detecção de tipos de máscaras usando NER (Named Entity Recognition) com [SpaCy](https://spacy.io/)
 
-## Estrutura
+## Estrutura do Projeto
 
-A Estrutura do projeto segue a mesma do [template](https://github.com/fsjunior/python-flask-restful-mongodb-template) no 
-qual ele foi baseado, com algumas coisas adicionadas:
+A estrutura segue a do template mencionado, com algumas adições:
 
-- Há um diretório `utils` com utilitários úteis para o projeto (que no caso é apenas uma ferramenta)
-para geração de exemplos de validação para o modelo de NLP.
-- O diretório `validation` possui alguns testes com intuito de validar o **modelo** para extração
-das entidades.
-- O diretório `nlp` possui o modelo criado e utilizado pela API.
+- `utils/`: Ferramentas auxiliares, como geradores de exemplos para validação do modelo.
+- `validation/`: Conjunto de testes voltados à validação do modelo de NER.
+- `nlp/`: Contém o modelo treinado utilizado pela API.
 
-Nota: o código da aplicação ainda está um pouco desorganizado, principalmente na parte da lógica de negócios 
-(inclusive com alguns avisos no code climate). 
-  
+⚠️ Nota: A lógica de negócios ainda está um pouco desorganizada e pode apresentar alguns avisos no Code Climate.
+
 ## Como funciona a extração de dados?
 
-A ideia desse projeto, pelo que se sabe de [proteção efetiva contra a COVID-19](https://chico.codes/blog/guia-prote%C3%A7%C3%A3o-contra-covid-19),
-é recomendar máscaras do tipo PFF2 e PFF3 sem válvula e com CA válido. Ao mesmo tempo, alertar o 
-usuário quando essas informações não são encontradas no site ou quando ele utiliza máscaras que 
-possuem [elastano](https://www.businessinsider.com/what-is-best-face-mask-coronavirus-protection-2020-7) 
-ou são do tipo KN95.
+Com base nas recomendações para proteção contra a COVID-19, a API tem como foco:
 
-Em um segundo momento (ainda não funcional), o objetivo é alertar para casos de preços abusivos de 
-máscaras, como tem acontecido de forma bastante frequente (algumas são vendidas por R$30!).
+- Recomendação de máscaras PFF2 ou PFF3 **sem válvula** e **com CA válido**
+- Alerta sobre máscaras que contenham **elastano** ou do tipo **KN95**, que podem ser menos eficazes
 
-Para extrair esses dados dos sites, eu utilizei [NER](https://en.wikipedia.org/wiki/Named-entity_recognition) 
-(Named Entity Recognition) por meio da biblioteca [spacy](https://spacy.io/). 
+### Modelo de NER
 
-Para isso, eu treinei um novo modelo baseado no modelo brasileiro que a biblioteca já disponibiliza. 
-Como esse é um caso de uso muito particular, precisei gerar o dataset para treiná-lo. 
-Para gerar ele, eu extrai informações de sites manualmente e etiquetei essas informações. As 
-etiquetas utilizadas foram:
- 
-- CA (Certificado de Aprovação)
-- CV (Com Válvula)
-- SV (Sem Válvula)
-- PFF1 (Respirador PFF Classe 1)
-- PFF2 (Respirador PFF Classe 2)
-- PFF3 (Respirador PFF Classe 3)
-- KN95 (Respirador padrão chinês)
-- EL (Elastano)
+Utilizei [SpaCy](https://spacy.io/) para treinar um modelo de NER personalizado, baseado no modelo brasileiro da própria biblioteca.
 
-O modelo treinado está disponível no diretório `nlp`. A partir desse modelo, a API extrai os dados
-dos sites apresentados e retorna em um JSON.
+Como se trata de um caso muito específico, criei manualmente um dataset anotado com as seguintes entidades:
 
+- `CA` (Certificado de Aprovação)
+- `CV` (Com Válvula)
+- `SV` (Sem Válvula)
+- `PFF1`, `PFF2`, `PFF3` (Classes de respiradores)
+- `KN95` (Modelo chinês)
+- `EL` (Elastano)
+
+Esse modelo está no diretório `nlp/` e é utilizado para extrair informações relevantes dos sites e retornar um JSON estruturado.
+
+### Futuro
+
+Em versões futuras, pretendo incluir um mecanismo para identificar **preços abusivos**, já que há casos de máscaras sendo vendidas por até R$30.
 
 ## FAQ
 
-### Por que usar spacy/NER e não regex?
+### Por que usar SpaCy/NER em vez de regex?
 
-A vantagem de usar um modelo estatísticos para extrair as entidades é que o próprio modelo aprende
-as características das entidades, sem necessidade analítica para que eu formasse regras para isso. 
-Além disso, os modelos não consideram apenas as palavras que estou procurando e sim também o 
-contexto no qual elas estão inseridas (ex: nem todo número é um Certificado de Aprovação, mas um 
-número com a palavra "CA" próxima deve ser).  
+Modelos estatísticos de NER aprendem as características das entidades com base no contexto, dispensando regras manuais. Por exemplo, nem todo número é um CA, mas um número próximo da palavra "CA" provavelmente é.
 
-### Achei um defeito, um problema ou uma sugestão na sua API. O que faço?
+### Encontrei um problema. O que fazer?
 
-Sinta-se a vontade para abrir uma issue e me informar do problema! Toda contribuição é bem-vinda.
+Sinta-se à vontade para abrir uma *issue* no repositório. Feedbacks e sugestões são sempre bem-vindos!
 
-### Testei em alguns sites e a análise não funcionou. O que ocorreu?
+### A análise não funcionou em alguns sites. Por quê?
 
-Essa API ainda está em fase experimental. Ela não funciona em alguns sites como Americanas ou Shopee.
+A API ainda está em fase experimental. Sites como Americanas ou Shopee, por exemplo, não são suportados no momento.
 
-Disponível sob a [MIT License](https://github.com/fsjunior/respirator-recommend-api/blob/main/LICENSE).
+---
+
+Disponível sob a [Licença MIT](https://github.com/fsjunior/respirator-recommend-api/blob/main/LICENSE).
